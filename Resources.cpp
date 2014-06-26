@@ -7,44 +7,10 @@ void GenerateModelMipMaps(TModel *mptr);
 void GenerateAlphaFlags(TModel *mptr);
 
 
-LPVOID _HeapAlloc(HANDLE hHeap,
-                  DWORD dwFlags,
-                  DWORD dwBytes)
-{
-   LPVOID res = HeapAlloc(hHeap,
-                          dwFlags | HEAP_ZERO_MEMORY,
-                          dwBytes);
-   if (!res)
-	   DoHalt("Heap allocation error!");
-
-   HeapAllocated+=dwBytes;
-   return res;
-}
-
-
-BOOL _HeapFree(HANDLE hHeap,
-               DWORD  dwFlags,
-               LPVOID lpMem)
-{
-	if (!lpMem) return FALSE;
-
-	HeapReleased+=
-		HeapSize(hHeap, HEAP_NO_SERIALIZE, lpMem);
-
-	BOOL res = HeapFree(hHeap,
-                       dwFlags,
-                       lpMem);
-	if (!res)
-		DoHalt("Heap free error!");
-
-	return res;
-}
-
-
 void AddMessage(LPSTR mt)
 {
-  MessageList.timeleft = timeGetTime() + 2 * 1000;
-  lstrcpy(MessageList.mtext, mt);
+	MessageList.timeleft = timeGetTime() + 2 * 1000;
+	lstrcpy(MessageList.mtext, mt);
 }
 
 void PlaceHunter()
@@ -1326,14 +1292,14 @@ void ScrollWater()
 
 
 
-void FillVector(int x, int y, Vector3d& v)
+void FillVector(int x, int y, glm::vec3& v)
 {
    v.x = (float)x*256;
    v.z = (float)y*256;
    v.y = (float)((int)HMap[y][x])*ctHScale;
 }
 
-BOOL TraceVector(Vector3d v, Vector3d lv)
+BOOL TraceVector(glm::vec3 v, glm::vec3 lv)
 {
   v.y+=4;
   NormVector(lv,64);
@@ -1371,7 +1337,7 @@ void RenderShadowCircle(int x, int y, int R, int D)
 void RenderLightMap()
 {
 
-  Vector3d lv;
+  glm::vec3 lv;
   int x,y;
 
   lv.x = - 412;

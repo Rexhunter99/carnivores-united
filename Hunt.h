@@ -1,10 +1,18 @@
-#include "math.h"
-#include "windows.h"
-#include "winuser.h"
+#pragma once
+
+#ifndef H_HUNT_H
+#define H_HUNT_H
+#endif // H_HUNT_H
+
+#include <math.h>
+#include <windows.h>
+#include <winuser.h>
+
+#include <glm/fwd.hpp>
 
 #include "resource.h"
 
-#include "ddraw.h"
+#include <ddraw.h>
 
 #ifdef _d3d
 #include <d3d.h>
@@ -19,7 +27,7 @@
 
 
 #ifdef _MAIN_
- #define _EXTORNOT 
+ #define _EXTORNOT
 #else
  #define _EXTORNOT extern
 #endif
@@ -47,7 +55,7 @@ typedef struct _Animation {
   short int* aniData;
 } TAni;
 
-typedef struct _VTLdata {  
+typedef struct _VTLdata {
   int aniKPS, FramesCount, AniTime;
   short int* aniData;
 } TVTL;
@@ -86,9 +94,9 @@ typedef struct TagTEXTURE  {
 
 
 
-typedef struct TagVector3d {
+typedef struct Tagglm::vec3 {
  float x,y,z;
-} Vector3d;
+} glm::vec3;
 
 typedef struct TagPoint3di {
  int x,y,z;
@@ -109,11 +117,11 @@ typedef struct TagScrPoint {
 } ScrPoint;
 
 typedef struct TagMScrPoint {
- int x,y, tx,ty;	 
+ int x,y, tx,ty;
 } MScrPoint;
 
 typedef struct tagClipPlane {
-   Vector3d v1,v2,nv;   
+   glm::vec3 v1,v2,nv;
 } CLIPPLANE;
 
 
@@ -121,7 +129,7 @@ typedef struct tagClipPlane {
 
 
 typedef struct TagEPoint {
-  Vector3d v;
+  glm::vec3 v;
   int  DFlags, scrx, scry, Light;
   float Fog;
 } EPoint;
@@ -135,17 +143,17 @@ typedef struct TagClipPoint {
 
 //================= MODEL ========================
 typedef struct _Point3d {
-	float x; 
-	float y; 
+	float x;
+	float y;
 	float z;
-	short owner; 
+	short owner;
 	short hide;
 } TPoint3d;
 
 
 
 typedef struct _Face {
-   int v1, v2, v3;   
+   int v1, v2, v3;
 #ifdef _d3d
    float tax, tbx, tcx, tay, tby, tcy;
 #else
@@ -153,33 +161,33 @@ typedef struct _Face {
 #endif
    WORD Flags,DMask;
    int Distant, Next, group;
-   char reserv[12];  
+   char reserv[12];
 } TFace;
 
 
 typedef struct _Facef {
-   int v1, v2, v3;   
+   int v1, v2, v3;
    float tax, tbx, tcx, tay, tby, tcy;
    WORD Flags,DMask;
    int Distant, Next, group;
-   char reserv[12];  
+   char reserv[12];
 } TFacef;
 
 
 
 typedef struct _Obj {
    char OName [32];
-   float ox; 
+   float ox;
    float oy;
    float oz;
-   short owner; 
+   short owner;
    short hide;
 } TObj;
 
 
 typedef struct TagMODEL {
     int VCount, FCount, TextureSize, TextureHeight;
-    TPoint3d gVertex[1024];    
+    TPoint3d gVertex[1024];
 	union {
      TFace    gFace  [1024];
 	 TFacef   gFacef [1024];
@@ -232,7 +240,7 @@ typedef struct _TWeapon {
 
 
 typedef struct _TExplosion {
-    Vector3d pos, rpos;
+    glm::vec3 pos, rpos;
     int EType, FTime;
 } TExplosion;
 
@@ -246,25 +254,25 @@ typedef struct _TCharacter  {
   int State;
   int NoWayCnt, NoFindCnt, AfraidTime, tgtime;
   int PPMorphTime, PrevPhase,PrevPFTime, Phase, FTime;
-  
+
   float vspeed, rspeed, bend, scale;
-  int Slide; 
+  int Slide;
   float slidex, slidez;
   float tgx, tgz;
 
-  Vector3d pos, rpos;
-  float tgalpha, alpha, beta, 
-        tggamma,gamma, 
+  glm::vec3 pos, rpos;
+  float tgalpha, alpha, beta,
+        tggamma,gamma,
         lookx, lookz;
   int Health;
 } TCharacter;
 
 
 
-typedef struct tagPlayer {  
+typedef struct tagPlayer {
   BOOL Active;
   unsigned int IPaddr;
-  Vector3d pos;
+  glm::vec3 pos;
   float alpha, beta, vspeed;
   int kbState;
   char NickName[16];
@@ -272,11 +280,11 @@ typedef struct tagPlayer {
 
 
 typedef struct _TDemoPoint {
-  Vector3d pos;
+  glm::vec3 pos;
   int DemoTime, CIndex;
 } TDemoPoint;
 
-typedef struct tagLevelDef {  
+typedef struct tagLevelDef {
     char FileName[64];
     char MapName[128];
     DWORD DinosAvail;
@@ -289,8 +297,8 @@ typedef struct tagShipTask {
   int clist[255];
 } TShipTask;
 
-typedef struct tagShip {  
-  Vector3d pos, rpos, tgpos, retpos;
+typedef struct tagShip {
+  glm::vec3 pos, rpos, tgpos, retpos;
   float alpha, tgalpha, speed, rspeed, DeltaY;
   int State, cindex, FTime;
 } TShip;
@@ -329,7 +337,7 @@ typedef struct _TTrophyRoom {
   int  Score, Rank;
 
   TStats Last, Total;
-    
+
   TTrophyItem Body[24];
 } TTrophyRoom;
 
@@ -339,7 +347,7 @@ typedef struct _TDinoInfo {
 	LPSTR Name;
 	int Health0;
 	BOOL DangerCall;
-	float Mass, Length, Radius, 
+	float Mass, Length, Radius,
 		  SmellK, HearK, LookK,
 		  ShDelta;
 	int   Scale0, ScaleA, BaseScore;
@@ -358,14 +366,14 @@ typedef struct _TFogEntity {
   int fogRGB;
   float YBegin;
   BOOL  Mortal;
-  float Transp, FLimit; 
+  float Transp, FLimit;
 } TFogEntity;
 
 
 typedef struct _TWind {
    float alpha;
    float speed;
-   Vector3d nv;
+   glm::vec3 nv;
 } TWind;
 
 
@@ -441,24 +449,22 @@ void AddDeadBody(TCharacter *cptr, int);
 void PlaceCharacters();
 void PlaceTrophy();
 void AnimateCharacters();
-void MakeNoise(Vector3d, float);
+void MakeNoise(glm::vec3, float);
 void CheckAfraid();
 void CreateChMorphedModel(TCharacter* cptr);
 void CreateMorphedObject(TModel* mptr, TVTL &vtl, int FTime);
 void CreateMorphedModel(TModel* mptr, TAni *aptr, int FTime);
 
 //=============================== Math ==================================//
-void  NormVector(Vector3d&, float); 
+void  NormVector(glm::vec3&, float);
 float SGN(float);
 void  DeltaFunc(float &a, float b, float d);
-void  MulVectorsScal(Vector3d&, Vector3d&, float&);
-void  MulVectorsVect(Vector3d&, Vector3d&, Vector3d&);
-Vector3d SubVectors( Vector3d&, Vector3d& );
-Vector3d RotateVector(Vector3d&);
-float VectorLength(Vector3d);
+glm::vec3 SubVectors( glm::vec3&, glm::vec3& );
+glm::vec3 RotateVector(glm::vec3&);
+float VectorLength(glm::vec3);
 int   siRand(int);
 int   rRand(int);
-void  CalcHitPoint(CLIPPLANE&, Vector3d&, Vector3d&, Vector3d&);
+void  CalcHitPoint(CLIPPLANE&, glm::vec3&, glm::vec3&, glm::vec3&);
 void  ClipVector(CLIPPLANE& C, int vn);
 float FindVectorAlpha(float, float);
 float AngleDifference(float a, float b);
@@ -470,7 +476,7 @@ int   TraceLook(float ax, float ay, float az,
 
 
 void CheckCollision(float&, float&);
-float CalcFogLevel(Vector3d v);
+float CalcFogLevel(glm::vec3 v);
 //=================================================================//
 void AddMessage(LPSTR mt);
 void CreateTMap();
@@ -498,10 +504,10 @@ void CreateFadeTab();
 void CreateVideoDIB();
 void RenderLightMap();
 
-void MulVectorsVect(Vector3d& v1, Vector3d& v2, Vector3d& r );
-void MulVectorsScal(Vector3d& v1,Vector3d& v2, float& r);
-Vector3d SubVectors( Vector3d& v1, Vector3d& v2 );
-void NormVector(Vector3d& v, float Scale);
+void MulVectorsVect(glm::vec3 v1, glm::vec3 v2, glm::vec3& r );
+void MulVectorsScal(glm::vec3& v1,glm::vec3& v2, float& r);
+glm::vec3 SubVectors( glm::vec3& v1, glm::vec3& v2 );
+void NormVector(glm::vec3& v, float Scale);
 
 LPVOID _HeapAlloc(HANDLE hHeap, DWORD dwFlags, DWORD dwBytes);
 BOOL _HeapFree(HANDLE hHeap, DWORD  dwFlags, LPVOID lpMem);
@@ -586,17 +592,17 @@ _EXTORNOT   TAmbient Ambient[256];
 _EXTORNOT   TSFX     RandSound[256];
 
 //========= GAME ====================//
-_EXTORNOT int TargetDino, TargetArea, TargetWeapon, 
+_EXTORNOT int TargetDino, TargetArea, TargetWeapon,
               TrophyTime, ObservMode, Tranq, ShotsLeft, ObjectsOnLook;
 
-_EXTORNOT Vector3d answpos;
+_EXTORNOT glm::vec3 answpos;
 _EXTORNOT int answtime;
 
 _EXTORNOT BOOL ScentMode, CamoMode, RadarMode, LockLanding, TrophyMode;
 _EXTORNOT TTrophyRoom TrophyRoom;
 _EXTORNOT TPlayerR PlayerR[16];
 _EXTORNOT TPicture LandPic,DinoPic,DinoPicM, MapPic, WepPic;
-_EXTORNOT TText DinoText, LandText, WepText, 
+_EXTORNOT TText DinoText, LandText, WepText,
                 RadarText, ScentText, ComfText, TranqText, ObserText;
 _EXTORNOT HFONT fnt_BIG, fnt_Small, fnt_Midd;
 _EXTORNOT TLandingList LandingList;
@@ -608,7 +614,7 @@ _EXTORNOT TWeapon Weapon;
 
 
 _EXTORNOT int   OCount, iModelFade, iModelBaseFade, Current;
-_EXTORNOT Vector3d  rVertex[1024];
+_EXTORNOT glm::vec3  rVertex[1024];
 _EXTORNOT TObj      gObj[1024];
 _EXTORNOT Vector2di gScrp[1024];
 
@@ -631,7 +637,7 @@ _EXTORNOT TExplosion     Explosions[256];
 _EXTORNOT TDemoPoint     DemoPoint;
 
 _EXTORNOT TPlayer        Players[16];
-_EXTORNOT Vector3d       PlayerPos, CameraPos;
+_EXTORNOT glm::vec3       PlayerPos, CameraPos;
 
 //========== Render ==================//
 _EXTORNOT   LPDIRECTDRAW lpDD;
@@ -659,7 +665,7 @@ _EXTORNOT   ClipPoint hleft,hright;
 
 _EXTORNOT   void  *HLineT;
 _EXTORNOT   int   rTColor;
-_EXTORNOT   int   SKYMin, SKYDTime, FadeL, GlassL, ctViewR, 
+_EXTORNOT   int   SKYMin, SKYDTime, FadeL, GlassL, ctViewR,
                   dFacesCount, ReverseOn, TDirection;
 _EXTORNOT   WORD  FadeTab[65][0x8000];
 
@@ -670,10 +676,10 @@ _EXTORNOT   int     PrevTime, TimeDt, T, Takt, RealTime, StepTime, MyHealth, Exi
                     CallLockTime, NextCall;
 _EXTORNOT   float   DeltaT;
 _EXTORNOT   float   CameraX, CameraY, CameraZ, CameraAlpha, CameraBeta;
-_EXTORNOT   float   PlayerX, PlayerY, PlayerZ, PlayerAlpha, PlayerBeta, 
+_EXTORNOT   float   PlayerX, PlayerY, PlayerZ, PlayerAlpha, PlayerBeta,
                     HeadY, HeadBackR, HeadBSpeed, HeadAlpha, HeadBeta,
-                    SSpeed,VSpeed,RSpeed,YSpeed;      
-_EXTORNOT   Vector3d PlayerNv;
+                    SSpeed,VSpeed,RSpeed,YSpeed;
+_EXTORNOT   glm::vec3 PlayerNv;
 
 _EXTORNOT   float   ca,sa,cb,sb, wpnDAlpha, wpnDBeta;
 _EXTORNOT   void    *lpVideoBuf, *lpMenuBuf, *lpMenuBuf2, *lpTextureAddr;
@@ -681,10 +687,10 @@ _EXTORNOT   HBITMAP hbmpVideoBuf, hbmpMenuBuf, hbmpMenuBuf2;
 _EXTORNOT   HCURSOR hcArrow;
 _EXTORNOT   int     DivTbl[10240];
 
-_EXTORNOT   Vector3d  v[3];
+_EXTORNOT   glm::vec3  v[3];
 _EXTORNOT   ScrPoint  scrp[3];
 _EXTORNOT   MScrPoint mscrp[3];
-_EXTORNOT   Vector3d  nv, waterclipbase;
+_EXTORNOT   glm::vec3  nv, waterclipbase;
 
 
 _EXTORNOT   struct _t {
@@ -730,12 +736,12 @@ _EXTORNOT   struct _t {
 #define HUNT_EAT      0
 #define HUNT_BREATH   1
 #define HUNT_FALL     2
-#define HUNT_KILL     3 
+#define HUNT_KILL     3
 
 _EXTORNOT BOOL WATERANI,Clouds,SKY,GOURAUD,
                MODELS,TIMER,BITMAPP,MIPMAP,
-               NOCLIP,CLIP3D,NODARKBACK,CORRECTION, LOWRESTX, 
-			   FOGENABLE, FOGON, CAMERAINFOG, 
+               NOCLIP,CLIP3D,NODARKBACK,CORRECTION, LOWRESTX,
+			   FOGENABLE, FOGON, CAMERAINFOG,
                WATERREVERSE,waterclip,UNDERWATER, NeedWater,
                SWIM, FLY, PAUSE, OPTICMODE, BINMODE, EXITMODE, MapMode, RunMode;
 _EXTORNOT int  CameraFogI;

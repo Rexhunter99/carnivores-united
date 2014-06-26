@@ -4,7 +4,12 @@
 #define _AUDIO_
 #include "audio.h"
 
+#include <string>
+#include <stdint.h>
 #include <stdio.h>
+
+using namespace std;
+
 
 HANDLE hAudioThread;
 DWORD  AudioTId;
@@ -12,7 +17,7 @@ WAVEFORMATEX wf;
 HWND hwndApp;
 BOOL AudioNeedRestore;
 char logtt[128];
-void PrintLog(LPSTR l);
+void PrintLog( string p_log );
 
 DWORD WINAPI ProcessAudioThread (LPVOID ptr)
 {
@@ -572,70 +577,46 @@ void Audio_MixAmbient3d()
 }
 
 
-
-
-
-
-void Audio_MixSound(int DestAddr, int SrcAddr, int MixLen, int LVolume, int RVolume)
+#define CLAMP16(x)	(((x) < 0) ? ((x) = -32767) : ((x) = 32767))
+/* Mixes 16-bit signed mono, 22050Hz */
+void Audio_MixSound(int16_t *DestAddr, int16_t *SrcAddr, int MixLen, int LVolume, int RVolume)
 {
-	asm( "mov      edi, DestAddr" );
-	asm( "mov      ecx, MixLen" );
-	asm( "mov      esi, SrcAddr" );
+	int32_t tmp;
 
-SOUND_CYCLE :
+	for ( ; MixLen > 0; MixLen-- )//while(MixLen--)
+	{
+		/* Do the left channel */
+		tmp = LVolume * *((int16_t*)SrcAddr) >> 16;
 
-_asm {
-       movsx    eax, word ptr [esi]
-       imul     LVolume
-       sar      eax, 16
-       mov      bx, word ptr [edi]
+		if(tmp >= 32768)
+		{
+			CLAMP16(*DestAddr);
+			//++DestAddr; CLAMP16(*DestAddr);
+		}
+		else
+		{
+			*DestAddr += tmp;
+			//++DestAddr; *DestAddr += tmp;
 
-       add      ax, bx
-       jo       LEFT_CHECK_OVERFLOW
-       mov      word ptr [edi], ax
-       jmp      CYCLE_RIGHT
- }
-LEFT_CHECK_OVERFLOW :
-__asm {
-       cmp      bx, 0
-       js       LEFT_MAX_NEGATIVE
-       mov      ax, 32767
-       mov      word ptr [edi], ax
-       jmp      CYCLE_RIGHT
-}
-LEFT_MAX_NEGATIVE :
-__asm  mov      word ptr [edi], -32767
+		}
 
+		++DestAddr;
 
+		/* Do the right channel */
+		tmp = RVolume * (*SrcAddr) >> 16;
 
+		if(tmp >= 32768)
+		{
+			CLAMP16(*DestAddr);
+			//++DestAddr; CLAMP16(*DestAddr);
+		}
+		else
+		{
+			*DestAddr += tmp;
+			//++DestAddr; *DestAddr += tmp;
+		}
 
-CYCLE_RIGHT :
-__asm {
-       movsx    eax, word ptr [esi]
-       imul     dword ptr RVolume
-       sar      eax, 16
-       mov      bx, word ptr [edi+2]
-
-       add      ax, bx
-       jo       RIGHT_CHECK_OVERFLOW
-       mov      word ptr [edi+2], ax
-       jmp      CYCLE_CONTINUE
-}
-RIGHT_CHECK_OVERFLOW :
-__asm {
-       cmp      bx, 0
-       js       RIGHT_MAX_NEGATIVE
-       mov      word ptr [edi+2], 32767
-       jmp      CYCLE_CONTINUE
-}
-RIGHT_MAX_NEGATIVE :
-__asm  mov      word ptr [edi+2], -32767
-
-CYCLE_CONTINUE :
-__asm {
-       add      edi, 4
-       add      esi, 2
-       dec      ecx
-       jnz      SOUND_CYCLE
-}
+		++DestAddr;
+		++SrcAddr;
+	}
 }

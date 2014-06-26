@@ -46,7 +46,7 @@ void wait_mouse_release()
 {
     while (GetAsyncKeyState(VK_RBUTTON) & 0x80000000);
 	while (GetAsyncKeyState(VK_LBUTTON) & 0x80000000);
-		
+
 }
 
 
@@ -59,15 +59,15 @@ int GetTextW(HDC hdc, LPSTR s)
 
 void PrintText(LPSTR s, int x, int y, int rgb)
 {
-  HBITMAP hbmpOld = SelectObject(hdcCMain,hbmpVideoBuf);   
-  SetBkMode(hdcCMain, TRANSPARENT);     
-   
-  SetTextColor(hdcCMain, 0x00000000);  
-  TextOut(hdcCMain, x+1, y+1, s, strlen(s));
-  SetTextColor(hdcCMain, rgb);
-  TextOut(hdcCMain, x, y, s, strlen(s));
+	HBITMAP hbmpOld = (HBITMAP)SelectObject(hdcCMain,hbmpVideoBuf);
+	SetBkMode(hdcCMain, TRANSPARENT);
 
-  SelectObject(hdcCMain,hbmpOld);		  
+	SetTextColor(hdcCMain, 0x00000000);
+	TextOut(hdcCMain, x+1, y+1, s, strlen(s));
+	SetTextColor(hdcCMain, rgb);
+	TextOut(hdcCMain, x, y, s, strlen(s));
+
+	SelectObject(hdcCMain,hbmpOld);
 }
 
 void DoHalt(LPSTR Mess)
@@ -88,17 +88,17 @@ void DoHalt(LPSTR Mess)
 }
 
 void InitDirectDraw()
-{  
+{
    PrintLog("\n");
    PrintLog("==Init Direct Draw==\n");
    HRESULT hres;
 
 
    hres = DirectDrawCreate( NULL, &lpDD, NULL );
-   if( hres != DD_OK ) {      
+   if( hres != DD_OK ) {
 	  wsprintf(logt, "DirectDrawCreate Error: %Xh\n", hres);
       PrintLog(logt);
-	  DoHalt("");	  
+	  DoHalt("");
    }
    PrintLog("DirectDrawCreate: Ok\n");
 
@@ -116,13 +116,13 @@ void InitDirectDraw()
 
 
    DWORD cl;
-   if (HARD3D) cl = DDSCL_NORMAL; else cl = DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN;   
+   if (HARD3D) cl = DDSCL_NORMAL; else cl = DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN;
    cl = DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN;
 
 #ifdef _DEBUG
    cl = DDSCL_NORMAL;
 #endif
-   
+
    hres = lpDD->SetCooperativeLevel( hwndMain, cl);
    if( hres != DD_OK )  {
 	  wsprintf(logt, "SetCooperativeLevel Error: %Xh\n", hres);
@@ -146,26 +146,26 @@ void WaitRetrace()
 }
 
 void SetFullScreen()
-{   
+{
    HRESULT res = DD_OK;
    if (!DirectActive) return;
    if (HARD3D) return;
    if (!GameState) return;
 
    FULLSCREEN=!FULLSCREEN;
-     
+
    if (!HARD3D)
-    if (FULLSCREEN) res = lpDD->SetDisplayMode( WinW, WinH, 16);    
+    if (FULLSCREEN) res = lpDD->SetDisplayMode( WinW, WinH, 16);
                else res = lpDD->RestoreDisplayMode();
- 
+
    if (res != DD_OK) {
 	 wsprintf(logt, "DDRAW: Error set video mode %dx%d\n", WinW, WinH);
      PrintLog(logt);
    }
 
    lpVideoRAM = 0;
-   
-   if (!HARD3D) 
+
+   if (!HARD3D)
      SetVideoMode(WinW, WinH);
    SetCursorPos(VideoCX, VideoCY);
 /*
@@ -177,11 +177,11 @@ void SetFullScreen()
 
    if( lpddsPrimary )
       lpddsPrimary->Release( );
-   
+
    if( lpDD2->CreateSurface( &ddsd, &lpddsPrimary, NULL ) != DD_OK )
       return;
 
-   if (lpddsPrimary->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL ) == DD_OK ) {      
+   if (lpddsPrimary->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL ) == DD_OK ) {
         lpVideoRAM = (WORD*)ddsd.lpSurface;
         lpddsPrimary->Unlock( ddsd.lpSurface );
         };
@@ -203,14 +203,14 @@ void Wait(int time)
 
 void SetVideoMode(int W, int H)
 {
-   WinW = W; 
+   WinW = W;
    WinH = H;
 
    WinEX = WinW - 1;
    WinEY = WinH - 1;
    VideoCX = WinW / 2;
    VideoCY = WinH / 2;
-    
+
    CameraW = (float)VideoCX*1.25f;
    CameraH = CameraW;
 
@@ -218,9 +218,9 @@ void SetVideoMode(int W, int H)
 
    if (!HARD3D) {
 	HRESULT res = DD_OK;
-    if (FULLSCREEN) 
-       res = lpDD->SetDisplayMode( WinW, WinH, 16);        
-	
+    if (FULLSCREEN)
+       res = lpDD->SetDisplayMode( WinW, WinH, 16);
+
 	if (res != DD_OK) {
 	 wsprintf(logt, "DDRAW: Error set video mode %dx%d\n", WinW, WinH);
      PrintLog(logt);
@@ -245,13 +245,13 @@ void SetVideoMode(int W, int H)
 
 
 void SetMenuVideoMode()
-{   
+{
    HRESULT hres = lpDD->SetDisplayMode( 800, 600, 16);
    if (hres != DD_OK) hres = lpDD->SetDisplayMode( 800, 600, 24);
    if (hres != DD_OK) hres = lpDD->SetDisplayMode( 800, 600, 32);
    if (hres != DD_OK) hres = lpDD->SetDisplayMode( 800, 600, 8);
-   
-   if (hres != DD_OK) 
+
+   if (hres != DD_OK)
      PrintLog("DDRAW: Error setting menu mode\n");
 
    SetWindowPos(hwndMain, HWND_TOP, 0, 0, 800, 600, SWP_SHOWWINDOW);
@@ -265,56 +265,56 @@ void SetMenuVideoMode()
 void ReloadDinoInfo()
 {
 	switch (TargetDino) {
-	 case 0: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mpara.tga"); 
-		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mpara_on.tga"); 
+	 case 0: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mpara.tga");
+		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mpara_on.tga");
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\para.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\para.txm");
 		     break;
-	 case 1: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mpach.tga"); 
-		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mpach_on.tga"); 			 
+	 case 1: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mpach.tga");
+		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mpach_on.tga");
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\pach.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\pach.txm");
 		     break;
-	 case 2: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\msteg.tga"); 
-		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\msteg_on.tga"); 			 
+	 case 2: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\msteg.tga");
+		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\msteg_on.tga");
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\steg.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\steg.txm");
 		     break;
-	 case 3: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mallo.tga"); 
-		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mallo_on.tga"); 
+	 case 3: LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mallo.tga");
+		     LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mallo_on.tga");
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\allo.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\allo.txm");
 		     break;
 
-     case 4: if (MaxDino<4) 
-		      LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtric_no.tga"); 		      
+     case 4: if (MaxDino<4)
+		      LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtric_no.tga");
 			 else {
-			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtric.tga"); 
-		      LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mtric_on.tga"); 
-			 }			 
+			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtric.tga");
+		      LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mtric_on.tga");
+			 }
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\tric.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\tric.txm");
-		     break;						 
-     case 5: if (MaxDino<4) 
-              LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mvelo_no.tga"); 
+		     break;
+     case 5: if (MaxDino<4)
+              LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mvelo_no.tga");
 			 else {
-			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mvelo.tga"); 
-		      LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mvelo_on.tga"); 
-			 }			 
+			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mvelo.tga");
+		      LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mvelo_on.tga");
+			 }
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\velo.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\velo.txm");
-		     break;			 
+		     break;
 
-     case 6: if (MaxDino<6) 
-			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtrex_no.tga"); 
+     case 6: if (MaxDino<6)
+			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtrex_no.tga");
 			 else {
-			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtrex.tga"); 
-		      LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mtrex_on.tga"); 
+			  LoadPictureTGA(DinoPic,  "HUNTDAT\\MENU\\DINOPIC\\mtrex.tga");
+		      LoadPictureTGA(DinoPicM, "HUNTDAT\\MENU\\DINOPIC\\mtrex_on.tga");
 			 }
 			 if (OptSys) LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\trex.txu");
 			        else LoadTextFile(DinoText, "HUNTDAT\\MENU\\DINOPIC\\trex.txm");
-		     break;			      
-	}			
+		     break;
+	}
 }
 
 
@@ -353,7 +353,7 @@ void ReloadAreaInfo()
 
 
 void LoadMenuTGA()
-{    
+{
     LPSTR m1,m2,mm;
 	MenuSelect = 0;
 
@@ -402,7 +402,7 @@ void LoadMenuTGA()
           m1="HUNTDAT\\MENU\\menuq.tga";
           m2="HUNTDAT\\MENU\\menuq_on.tga";
           mm="HUNTDAT\\MENU\\mq_map.raw";
-          break;	  
+          break;
       case 111:
 		  m1="HUNTDAT\\MENU\\menus.tga";
           m2="HUNTDAT\\MENU\\menus.tga";
@@ -419,33 +419,33 @@ void LoadMenuTGA()
           mm="";
           break;
     }
-    
+
     DWORD l;
     HANDLE hfile;
 
     hfile = CreateFile(m1, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
     if( hfile == INVALID_HANDLE_VALUE ) return;
     SetFilePointer(hfile, 18, 0, FILE_BEGIN);
-    for (int y=599; y>=0; y--) ReadFile( hfile, (WORD*)lpMenuBuf+y*800,  800*2, &l, NULL );       
-    CloseHandle( hfile ); 
+    for (int y=599; y>=0; y--) ReadFile( hfile, (WORD*)lpMenuBuf+y*800,  800*2, &l, NULL );
+    CloseHandle( hfile );
     Sleep(2);
 
     hfile = CreateFile(m2, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
     if( hfile == INVALID_HANDLE_VALUE ) return;
     SetFilePointer(hfile, 18, 0, FILE_BEGIN);
-    //ReadFile( hfile, lpMenuBuf2, 800*600*2, &l, NULL );       
-	for (y=599; y>=0; y--) ReadFile( hfile, (WORD*)lpMenuBuf2+y*800,  800*2, &l, NULL );       
-    CloseHandle( hfile ); 
+    //ReadFile( hfile, lpMenuBuf2, 800*600*2, &l, NULL );
+	for (int y=599; y>=0; y--) ReadFile( hfile, (WORD*)lpMenuBuf2+y*800,  800*2, &l, NULL );
+    CloseHandle( hfile );
     Sleep(2);
 
 	FillMemory(MenuMap, sizeof(MenuMap), 0);
 
     hfile = CreateFile(mm, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
-    if( hfile == INVALID_HANDLE_VALUE ) return;    
-    ReadFile( hfile, MenuMap, 120000, &l, NULL );    
-    CloseHandle( hfile ); 
+    if( hfile == INVALID_HANDLE_VALUE ) return;
+    ReadFile( hfile, MenuMap, 120000, &l, NULL );
+    CloseHandle( hfile );
     Sleep(2);
-   
+
 }
 
 
@@ -455,19 +455,19 @@ void LoadMenuTGA()
 
 void ShowMenuVideo()
 {
-  HDC _hdc =  hdcCMain;
-  HBITMAP hbmpOld = SelectObject(_hdc,hbmpVideoBuf);
-  if (RestartMode) 
-	  FillMemory(lpVideoBuf, 1024*600*2, 0);
-  BitBlt(hdcMain,0,0,800,600, _hdc,0,0, SRCCOPY);
-  SelectObject(_hdc,hbmpOld);		  
+	HDC _hdc =  hdcCMain;
+	HBITMAP hbmpOld = (HBITMAP)SelectObject(_hdc,hbmpVideoBuf);
+	if (RestartMode)
+		FillMemory(lpVideoBuf, 1024*600*2, 0);
+	BitBlt(hdcMain,0,0,800,600, _hdc,0,0, SRCCOPY);
+	SelectObject(_hdc,hbmpOld);
 }
 
 
 
 
 void AddPicture(TPicture &pic, int x0, int y0)
-{  
+{
   for (int y=0; y<pic.H; y++)
 	memcpy( (WORD*)lpVideoBuf + x0 + ((y0+y)<<10),
 	        pic.lpImage + y * pic.W,
@@ -485,17 +485,17 @@ void Line(HDC hdc, int x1, int y1, int x2, int y2)
 
 void DrawSlider(int x, int y, float l)
 {
-	int W = 120; y+=13;	
+	int W = 120; y+=13;
 
 	HPEN wp = CreatePen(PS_SOLID, 0, 0x009F9F9F);
 	HBRUSH wb = CreateSolidBrush(0x003FAF3F);
 
-    HPEN oldpen = SelectObject(hdcCMain, GetStockObject(BLACK_PEN));
-	HBRUSH  oldbrs = SelectObject(hdcCMain, GetStockObject(BLACK_BRUSH));
-	HBITMAP oldbmp = SelectObject(hdcCMain,hbmpVideoBuf);   
-	
+    HPEN oldpen = (HPEN)SelectObject(hdcCMain, GetStockObject(BLACK_PEN));
+	HBRUSH  oldbrs = (HBRUSH)SelectObject(hdcCMain, GetStockObject(BLACK_BRUSH));
+	HBITMAP oldbmp = (HBITMAP)SelectObject(hdcCMain,hbmpVideoBuf);
 
-	x+=1; y+=1; 
+
+	x+=1; y+=1;
 	Line(hdcCMain, x,y-9, x+W+1,y-9);
 	Line(hdcCMain, x,y, x+W+1,y);
 	Line(hdcCMain, x,y-8, x,y);
@@ -504,7 +504,7 @@ void DrawSlider(int x, int y, float l)
 	Line(hdcCMain, x+W/4,y-8, x+W/4,y);
 	Line(hdcCMain, x+W*3/4,y-8, x+W*3/4,y);
 
-	x-=1; y-=1; 
+	x-=1; y-=1;
 	SelectObject(hdcCMain, wp);
 	Line(hdcCMain, x,y-9, x+W+1,y-9);
 	Line(hdcCMain, x,y, x+W+1,y);
@@ -519,34 +519,34 @@ void DrawSlider(int x, int y, float l)
 
 	SelectObject(hdcCMain, wb);
 	PatBlt(hdcCMain, x+1,y-6, (int)(W*l/2.f), 4, PATCOPY);
-	
+
 
 	SelectObject(hdcCMain, oldpen);
 	SelectObject(hdcCMain, oldbrs);
     SelectObject(hdcCMain, oldbmp);
-	DeleteObject(wp);	
-	DeleteObject(wb);	
+	DeleteObject(wp);
+	DeleteObject(wb);
 }
 
 
 void DrawOptions()
 {
-	HFONT oldfont = SelectObject(hdcCMain, fnt_BIG);
-	
-	for (int m=0; m<3; m++) 
+	HFONT oldfont = (HFONT)SelectObject(hdcCMain, fnt_BIG);
+
+	for (int m=0; m<3; m++)
 		for (int l=0; l<Options[m].Count; l++) {
 			int x0 = Options[m].x0;
 			int y0 = Options[m].y0 + l*25;
 
 			int c = 0x005282b2;
 			if (m == OptMode && l== OptLine) c = 0x00a0d0f0;
-			PrintText(Options[m].Item[l], 
+			PrintText(Options[m].Item[l],
 				      x0 - GetTextW(hdcCMain, Options[m].Item[l]),  y0, c);
-			
+
 
 			c = 0xB0B0A0;
 			x0+=16;
-			if (m==0) 
+			if (m==0)
 				switch (l) {
 				case 0:
 					PrintText(HMLtxt[OptAgres], x0, y0, c);
@@ -566,14 +566,14 @@ void DrawOptions()
   			if (m==1)
 			if (l<Options[m].Count-1)
 			 if (WaitKey==l)
-				PrintText("<?>", x0, y0, c); 
+				PrintText("<?>", x0, y0, c);
 			 else
-				PrintText(KeysName[MapVKKey( *((int*)(&KeyMap)+l) )], x0, y0, c); 
+				PrintText(KeysName[MapVKKey( *((int*)(&KeyMap)+l) )], x0, y0, c);
 			 else
-				PrintText(Ontxt[REVERSEMS], x0, y0, c); 
+				PrintText(Ontxt[REVERSEMS], x0, y0, c);
 
 
-			if (m==2) 
+			if (m==2)
 				switch (l) {
 				case 0:
 					PrintText(Restxt[OptRes], x0, y0, c);
@@ -593,10 +593,10 @@ void DrawOptions()
 			}
 
 
-		
+
 	}
 
-	
+
 	SelectObject(hdcCMain, oldfont);
 }
 
@@ -606,7 +606,7 @@ void DrawOptions()
 
 void DrawMainStats()
 {
-   HFONT oldfont = SelectObject(hdcCMain, fnt_BIG);
+   HFONT oldfont = (HFONT)SelectObject(hdcCMain, fnt_BIG);
    char t[32];
    int  c = 0x003070A0;
 
@@ -614,7 +614,7 @@ void DrawMainStats()
 
    wsprintf(t,"%d", TrophyRoom.Score);
    PrintText(t, 540, 9, c);
-   
+
    switch (TrophyRoom.Rank) {
 	case 0: PrintText("Novice  ", 344, 9, c); break;
 	case 1: PrintText("Advanced", 344, 9, c); break;
@@ -628,12 +628,12 @@ void DrawMainStats()
 void DrawMainStats2()
 {
    char t[32];
-   int  c = 0x00209090;   
+   int  c = 0x00209090;
    int  ttm = (int)TrophyRoom.Total.time;
    int  ltm = (int)TrophyRoom.Last.time;
 
    PrintText("Path travelled  ", 718 - GetTextW(hdcCMain,"Path travelled  "), 78, c);
-   
+
    if (OptSys)  sprintf(t,"%1.0f ft.", TrophyRoom.Last.path / 0.3f);
    else         sprintf(t,"%1.0f m.", TrophyRoom.Last.path);
 
@@ -682,7 +682,7 @@ void DrawMainStats2()
      sprintf(t,"%d%%", TrophyRoom.Total.ssucces * 100 / TrophyRoom.Total.smade);
    else
 	 wsprintf(t,"100%%");
-   PrintText(t, 718, 288, c);   
+   PrintText(t, 718, 288, c);
 
    DrawMainStats();
 }
@@ -709,7 +709,7 @@ void DrawRegistry()
 
 	   if (PlayerR[i].Rank==2) PrintText("Exp", REGLISTX+146, REGLISTY+i*20, c); else
 	   if (PlayerR[i].Rank==1) PrintText("Adv", REGLISTX+146, REGLISTY+i*20, c); else
-	                           PrintText("Nov", REGLISTX+146, REGLISTY+i*20, c); 
+	                           PrintText("Nov", REGLISTX+146, REGLISTY+i*20, c);
    }
 }
 
@@ -719,12 +719,12 @@ void DrawRemove()
 {
    //HFONT oldfont = SelectObject(hdcCMain, fnt_Small);
    char t[32];
-   int  c = 0x00B08030;   
-   
+   int  c = 0x00B08030;
+
    PrintText("Do you want to delete player", 290, 370, c);
    wsprintf(t,"'%s' ?",PlayerR[CurPlayer].PName);
    PrintText(t, 300, 394, c);
-   
+
 
    //SelectObject(hdcCMain, oldfont);
 }
@@ -741,13 +741,13 @@ void CopyMenuToVideo(int m)
 
   smap[m] = 1;
 
-  
-  if (MenuState==1) 
+
+  if (MenuState==1)
 	  if (ObservMode) smap[3] = 1; else smap[3] = 0;
-  
+
   if (MenuState==2) {
 	  if (Tranq) smap[3] = 1; else smap[3] = 0;
-	  
+
 	  if (ScentMode) smap[4] = 1; else smap[4] = 0;
 	  if (CamoMode)  smap[5] = 1; else smap[5] = 0;
 	  if (RadarMode) smap[6] = 1; else smap[6] = 0;
@@ -755,16 +755,16 @@ void CopyMenuToVideo(int m)
 
   if (MenuState==3) {
    smap[1] = 0; smap[2] = 0; smap[3] = 0;
-   smap[OptMode+1]=1; 
+   smap[OptMode+1]=1;
   }
 
   for (int y=0; y<300; y++) {
    int *vbuf = (int*)lpVideoBuf+(y<<10);
    mda=y*800;
-   for (int x=0; x<400; x++) {     
+   for (int x=0; x<400; x++) {
 		 if (smap[MenuMap[y][x]]) msrc = (int*)lpMenuBuf2 + mda; else msrc = (int*)lpMenuBuf+mda;
          *(vbuf)     = *(msrc);
-		 *(vbuf+512) = *(msrc + 400);		
+		 *(vbuf+512) = *(msrc + 400);
          vbuf++;
 		 mda++;
 		}
@@ -787,23 +787,23 @@ void CopyMenuToVideo(int m)
         else AddPicture(DinoPic, 401, 64);
 
    for (int t=0; t<DinoText.Lines; t++)
-     PrintText(DinoText.Text[t], 420, 330+t*16, 0x209F85);   
+     PrintText(DinoText.Text[t], 420, 330+t*16, 0x209F85);
 
      PrintText("Sight", 520 - GetTextW(hdcCMain,"Sight"), 450+0*20, 0x209F85);
 	 PrintText("Scent", 520 - GetTextW(hdcCMain,"Scent"), 450+1*20, 0x209F85);
 	 PrintText("Hearing", 520 - GetTextW(hdcCMain,"Hearing"), 450+2*20, 0x209F85);
-     	 
+
      DrawSlider(526, 450+0*20,  DinoInfo[TargetDino+4].LookK*2);
 	 DrawSlider(526, 450+1*20,  DinoInfo[TargetDino+4].SmellK*2);
 	 DrawSlider(526, 450+2*20,  DinoInfo[TargetDino+4].HearK*2);
-	 
+
 
    if (MenuSelect==3)
-    for (t=0; t<ObserText.Lines; t++)
-      PrintText(ObserText.Text[t], 50, 330+t*16, 0x809F25);   
+    for (int t=0; t<ObserText.Lines; t++)
+      PrintText(ObserText.Text[t], 50, 330+t*16, 0x809F25);
    else
-    for (t=0; t<LandText.Lines; t++)
-      PrintText(LandText.Text[t], 50, 330+t*16, 0x809F25);   
+    for (int t=0; t<LandText.Lines; t++)
+      PrintText(LandText.Text[t], 50, 330+t*16, 0x809F25);
   }
 
   if (MenuState==2) {
@@ -815,7 +815,7 @@ void CopyMenuToVideo(int m)
 	 PrintText("Shot precision:", 160 - GetTextW(hdcCMain,"Shot precision:"), 454+1*20, 0xB09F45);
 	 PrintText("Volume", 160 - GetTextW(hdcCMain,"Volume:"), 454+2*20, 0xB09F45);
      PrintText("Rate of fire:", 160 - GetTextW(hdcCMain,"Rate of fire:"), 454+3*20, 0xB09F45);
-	 
+
      DrawSlider(166, 454+0*20,  WeapInfo[TargetWeapon].Power);
 	 DrawSlider(166, 454+1*20,  WeapInfo[TargetWeapon].Prec);
 	 DrawSlider(166, 454+2*20,  2.0f-WeapInfo[TargetWeapon].Loud);
@@ -832,7 +832,7 @@ void CopyMenuToVideo(int m)
    if (MenuSelect==5)
     for (int t=0; t<ComfText.Lines; t++)
      PrintText(ComfText.Text[t], 420, 330+t*16, 0xB09F45);
-   
+
    if (MenuSelect==6)
     for (int t=0; t<RadarText.Lines; t++)
      PrintText(RadarText.Text[t], 420, 330+t*16, 0xB09F45);
@@ -849,23 +849,23 @@ void CopyMenuToVideo(int m)
 
 
 void SelectMenu0(int s)
-{  
-    if (!s) return;    
+{
+    if (!s) return;
 	AddVoice3d(fxMenuGo.length, fxMenuGo.lpData,
 		       (float)1024+(p.x-200)*3, 0.f, 200.f);
     CopyMenuToVideo(0); ShowMenuVideo();        Wait(50);
-    CopyMenuToVideo(s); ShowMenuVideo();        
+    CopyMenuToVideo(s); ShowMenuVideo();
 	LastMenuSelect=255;
-          
-   switch (s) {      
+
+   switch (s) {
 //============ new =============//
-   case 1: 
+   case 1:
 	  TrophyMode = FALSE;
-      MenuState=1;	  
+      MenuState=1;
       LoadMenuTGA();
 	  ReloadDinoInfo();
 	  ReloadAreaInfo();
-	  break;   
+	  break;
 //============ options =============//
    case 2:
 	  if (WinW==320) OptRes=0;
@@ -885,22 +885,22 @@ void SelectMenu0(int s)
       GameState = 1;
       break;
 //============ credits =============//
-   case 4: 
-      MenuState=4;       
+   case 4:
+      MenuState=4;
       LoadMenuTGA();
       break;
 //============ quit =============//
-   case 5: 	  
+   case 5:
 	  //DestroyWindow(hwndMain);
-      MenuState=8;       
+      MenuState=8;
       LoadMenuTGA();
       break;
-   case 6:	  
+   case 6:
       MenuState=111;
       LoadMenuTGA();
       break;
   }
-  
+
   wait_mouse_release();
 }
 
@@ -908,18 +908,18 @@ void SelectMenu0(int s)
 
 void SelectMenu1(int s)
 {
-    if (!s) return;    
+    if (!s) return;
     AddVoice3d(fxMenuGo.length, fxMenuGo.lpData,
-		       (float)1024+(p.x-200)*3, 0, 200);                 
-	CopyMenuToVideo(0); 	
+		       (float)1024+(p.x-200)*3, 0, 200);
+	CopyMenuToVideo(0);
 	ShowMenuVideo();        Wait(50);
 
-    CopyMenuToVideo(s); 	
-	ShowMenuVideo();        
+    CopyMenuToVideo(s);
+	ShowMenuVideo();
 
 	LastMenuSelect=255;
-	
-	switch (s) {           
+
+	switch (s) {
      case 1:
       if (TargetArea<5) TargetArea++; else TargetArea=0;
 	  ReloadAreaInfo();
@@ -927,11 +927,11 @@ void SelectMenu1(int s)
 	 case 2:
       if (TargetArea) TargetArea--; else TargetArea=5;
 	  ReloadAreaInfo();
-	  break;       
+	  break;
 	 case 3:
 	  ObservMode = !ObservMode;
 	  break;
-	 
+
 
 	 case 4:
       if (TargetDino<6) TargetDino++; else TargetDino=0;
@@ -941,8 +941,8 @@ void SelectMenu1(int s)
 	  if (TargetDino) TargetDino--; else TargetDino=6;
 	  ReloadDinoInfo();
 	  break;
-	 
-     case 7: 
+
+     case 7:
       MenuState=0;
       LoadMenuTGA();
       break;
@@ -957,33 +957,33 @@ void SelectMenu1(int s)
 
 	  if (!ChInfo[TargetDino+4].mptr) break;
 	  if (ObservMode) {
-		  wsprintf(ProjectName, "huntdat\\areas\\area%d", TargetArea+1);		  
-	      GameState = 1;		 
+		  wsprintf(ProjectName, "huntdat\\areas\\area%d", TargetArea+1);
+	      GameState = 1;
 	  } else {
 	      MenuState=2;
           LoadMenuTGA();
 	      ReloadWeaponInfo();
-	  }      
+	  }
 	  break;
 	}
-	
-	
+
+
     wait_mouse_release();
 }
 
 
 void SelectMenu2(int s)
 {
-    if (!s) return;    
+    if (!s) return;
     AddVoice3d(fxMenuGo.length, fxMenuGo.lpData,
-		       (float)1024+(p.x-200)*3, 0, 200);                 
+		       (float)1024+(p.x-200)*3, 0, 200);
 	CopyMenuToVideo(0); ShowMenuVideo();  Wait(50);
-    CopyMenuToVideo(s); ShowMenuVideo();        
+    CopyMenuToVideo(s); ShowMenuVideo();
 
 	LastMenuSelect=255;
 
-	
-	switch (s) {           
+
+	switch (s) {
      case 1:
       if (TargetWeapon<2) TargetWeapon++; else TargetWeapon=0;
 	  ReloadWeaponInfo();
@@ -1004,13 +1004,13 @@ void SelectMenu2(int s)
 	  break;
 	 case 6:
 	  RadarMode = !RadarMode;
-	  break;		 
-	 	 
-     case 7: 
+	  break;
+
+     case 7:
       MenuState=1;
       LoadMenuTGA();
       break;
-     case 8: 	  
+     case 8:
 		 if (TrophyRoom.Rank<1 && TargetWeapon>1) {
 			 MessageBeep(0xFFFFFFFF);
 			 break;
@@ -1019,8 +1019,8 @@ void SelectMenu2(int s)
 	  GameState = 1;
 	  break;
 	}
-	
-	
+
+
     wait_mouse_release();
 }
 
@@ -1060,57 +1060,57 @@ HCURSOR menucurs;
 
 void ProcessMainMenu()
 {
- if (KeyboardState [VK_LBUTTON] & 128) 
+ if (KeyboardState [VK_LBUTTON] & 128)
     SelectMenu0(MenuSelect);
-            
+
  if (MenuSelect!=LastMenuSelect) {
-	CopyMenuToVideo(MenuSelect);  	
-    ShowMenuVideo();  
+	CopyMenuToVideo(MenuSelect);
+    ShowMenuVideo();
  }
 }
 
 
 void ProcessCreditMenu()
-{ 
+{
   if (KeyboardState [VK_ESCAPE] & 128) KeyboardState [VK_LBUTTON] |= 128;
   if (KeyboardState [VK_RETURN] & 128) KeyboardState [VK_LBUTTON] |= 128;
 
   if (KeyboardState [VK_LBUTTON] & 128) {
-    MenuState=0;       
+    MenuState=0;
     LoadMenuTGA();
 	wait_mouse_release();
   }
-           
+
   CopyMenuToVideo(MenuSelect);
-  ShowMenuVideo();  
+  ShowMenuVideo();
 }
 
 
 void ProcessLicense()
-{ 
+{
  if (MenuSelect)
   if (KeyboardState [VK_LBUTTON] & 128) {
 
 	AddVoice3d(fxMenuGo.length, fxMenuGo.lpData, (float)1024+(p.x-200)*3, 0.f, 200.f);
     CopyMenuToVideo(0); ShowMenuVideo();        Wait(50);
-    CopyMenuToVideo(MenuSelect); ShowMenuVideo();        
+    CopyMenuToVideo(MenuSelect); ShowMenuVideo();
 	LastMenuSelect=255;
 	wait_mouse_release();
 
 	if (MenuSelect==1) {
-      MenuState=0;       
+      MenuState=0;
       LoadMenuTGA();
 	} else {
-	  char fname[128];	  
+	  char fname[128];
 	  wsprintf(fname, "trophy0%d.sav", TrophyRoom.RegNumber);
 	  DeleteFile(fname);
 	  DoHalt("");
 	}
-	
+
   }
-           
+
   CopyMenuToVideo(MenuSelect);
-  ShowMenuVideo();  
+  ShowMenuVideo();
 }
 
 
@@ -1120,37 +1120,37 @@ void RemovePlayer()
 	TrophyRoom.PlayerName[0]=0;
 	char fname[128];
 	wsprintf(fname, "trophy0%d.sav", CurPlayer);
-	DeleteFile(fname);	
+	DeleteFile(fname);
 	LoadPlayersInfo();
 }
 
 
 
 void ProcessRemove()
-{ 
+{
  if (MenuSelect)
   if (KeyboardState [VK_LBUTTON] & 128) {
 
 	AddVoice3d(fxMenuGo.length, fxMenuGo.lpData, (float)1024+(p.x-200)*3, 0.f, 200.f);
     CopyMenuToVideo(0); ShowMenuVideo();        Wait(50);
-    CopyMenuToVideo(MenuSelect); ShowMenuVideo();        
+    CopyMenuToVideo(MenuSelect); ShowMenuVideo();
 	LastMenuSelect=255;
 	wait_mouse_release();
 
 	if (MenuSelect==1) {
 	  RemovePlayer();
-      MenuState=-1;      
+      MenuState=-1;
       LoadMenuTGA();
 	} else {
 	  MenuState=-1;
 	  LoadMenuTGA();
 	  return;
 	}
-	
+
   }
-           
+
   CopyMenuToVideo(MenuSelect);
-  ShowMenuVideo();  
+  ShowMenuVideo();
 }
 
 
@@ -1168,14 +1168,14 @@ void IdentifyPlayer()
 	   }
 
 //=== search for free slot =======//
-   for (i=0; i<6; i++)
+   for (int i=0; i<6; i++)
 	   if (!PlayerR[i].PName[0]) {
 		   NEWPLAYER = TRUE;
 		   CurPlayer=i;
 		   break;
-	   }        
-   
-   
+	   }
+
+
    if (CurPlayer!=-1) {
      TrophyRoom.RegNumber=CurPlayer;
 	 if (HARD3D) OptRes = 3; else OptRes=2;
@@ -1191,53 +1191,53 @@ void IdentifyPlayer()
 
 
 void ProcessRegistry()
-{ 
+{
   if (KeyboardState [VK_RETURN] & 128) {
 	  MenuSelect=1;
 	  KeyboardState [VK_LBUTTON] |= 128;
   }
 
   if (KeyboardState [VK_LBUTTON] & 128) {
-	  for (int i=0; i<6; i++) 
+	  for (int i=0; i<6; i++)
         if (p.x<<1 > REGLISTX && p.x<<1 < REGLISTX + 200 &&
-			p.y<<1 > REGLISTY+i*20 && p.y<<1 < REGLISTY+i*20+18) 
+			p.y<<1 > REGLISTY+i*20 && p.y<<1 < REGLISTY+i*20+18)
 		if (PlayerR[i].PName[0])
 		{
 			if (CurPlayer==i) MenuSelect=1;
 			CurPlayer=i;
 			wsprintf(TrophyRoom.PlayerName, "%s", PlayerR[i].PName);
 		}
-	  
+
     AddVoice3d(fxMenuGo.length, fxMenuGo.lpData, (float)1024+(p.x-200)*3, 0.f, 200.f);
     CopyMenuToVideo(0); ShowMenuVideo();        Wait(50);
-    CopyMenuToVideo(MenuSelect); ShowMenuVideo();        
+    CopyMenuToVideo(MenuSelect); ShowMenuVideo();
 	LastMenuSelect=255;
 	wait_mouse_release();
 
-	if (MenuSelect==2) 
+	if (MenuSelect==2)
 		if (CurPlayer>=0)
 			if (PlayerR[CurPlayer].PName[0]) {
 		MenuState=-3;
-        LoadMenuTGA();	  
-		//RemovePlayer();	
+        LoadMenuTGA();
+		//RemovePlayer();
 	}
-          
+
     if (MenuSelect==1) {
 	  IdentifyPlayer();
 	  if (CurPlayer>=0) {
-        if (NEWPLAYER) MenuState=-2; 
-		          else MenuState=0; 
+        if (NEWPLAYER) MenuState=-2;
+		          else MenuState=0;
 	    TrophyRoom.RegNumber=CurPlayer;
 	    LoadTrophy();
-        LoadMenuTGA();	  
+        LoadMenuTGA();
 	  }
 	}
-  }	  
-           
-  
-	CopyMenuToVideo(MenuSelect);  	
-    ShowMenuVideo();  
-  
+  }
+
+
+	CopyMenuToVideo(MenuSelect);
+    ShowMenuVideo();
+
 }
 
 
@@ -1245,24 +1245,24 @@ void ProcessRegistry()
 
 
 void ProcessOptionsMenu()
-{ 
+{
   if (KeyboardState [VK_LBUTTON] & 128) {
 
 	if (MenuSelect)    AddVoice(fxMenuGo.length, fxMenuGo.lpData);
 
 	if (!MenuSelect)
      if (WaitKey==-1)
-		for (int m=0; m<3; m++)			
+		for (int m=0; m<3; m++)
 			for (int l=0; l<Options[m].Count; l++) {
 			 int x0 = Options[m].x0;
-			 int y0 = Options[m].y0 + l*25;			 
+			 int y0 = Options[m].y0 + l*25;
 			 if (p.x*2>x0-120 && p.x*2<x0+120 && p.y*2>y0 && p.y*2<y0+23) {
 				 OptMode = m; OptLine = l;
-				 if (m==1) 
+				 if (m==1)
 				   if (l<Options[m].Count-1)
-					 WaitKey = l;				 
+					 WaitKey = l;
 				 AddVoice(fxMenuGo.length, fxMenuGo.lpData);
-				 SelectOptions();				 
+				 SelectOptions();
 				 CopyMenuToVideo(0); ShowMenuVideo();
 				 //SetupKey();
 			 }
@@ -1275,13 +1275,13 @@ void ProcessOptionsMenu()
 		if (OptRes==1) { WinW = 400; WinH=300; }
 		if (OptRes==2) { WinW = 512; WinH=384; }
 		if (OptRes==3) { WinW = 640; WinH=480; }
-		if (OptRes==4) { WinW = 800; WinH=600; }		
-		if (OptRes==5) { WinW =1024; WinH=768; }		
-		
+		if (OptRes==4) { WinW = 800; WinH=600; }
+		if (OptRes==5) { WinW =1024; WinH=768; }
+
 		SaveTrophy();
 		CopyMenuToVideo(0); ShowMenuVideo();  Wait(50);
-        CopyMenuToVideo(MenuSelect); ShowMenuVideo();        
-        MenuState=0;       
+        CopyMenuToVideo(MenuSelect); ShowMenuVideo();
+        MenuState=0;
         LoadMenuTGA();
 	  } else {
 		OptMode = MenuSelect-1;
@@ -1289,10 +1289,10 @@ void ProcessOptionsMenu()
 	  }
  	wait_mouse_release();
   }
-           
+
   CopyMenuToVideo(MenuSelect);
-  
-  ShowMenuVideo();  
+
+  ShowMenuVideo();
 }
 
 
@@ -1302,13 +1302,13 @@ void ProcessLocationMenu()
  AreaMax = 2;
  if (TrophyRoom.Rank  )   { MaxDino = 5; AreaMax = 4; }
  if (TrophyRoom.Rank==2)  { MaxDino = 6; AreaMax = 5; }
- 
- if (KeyboardState [VK_LBUTTON] & 128) 
+
+ if (KeyboardState [VK_LBUTTON] & 128)
     SelectMenu1(MenuSelect);
-            
+
  if (MenuSelect!=LastMenuSelect) {
-	CopyMenuToVideo(MenuSelect);  		
-    ShowMenuVideo();  
+	CopyMenuToVideo(MenuSelect);
+    ShowMenuVideo();
  }
 }
 
@@ -1316,13 +1316,13 @@ void ProcessLocationMenu()
 void ProcessWeaponMenu()
 {
  if (TargetDino==6) Tranq = FALSE;
- if (KeyboardState [VK_LBUTTON] & 128) 
-    SelectMenu2(MenuSelect); 
- if (TargetDino==6) Tranq = FALSE;            
+ if (KeyboardState [VK_LBUTTON] & 128)
+    SelectMenu2(MenuSelect);
+ if (TargetDino==6) Tranq = FALSE;
 
  if (MenuSelect!=LastMenuSelect) {
-	CopyMenuToVideo(MenuSelect);  		
-    ShowMenuVideo();  
+	CopyMenuToVideo(MenuSelect);
+    ShowMenuVideo();
  }
 }
 
@@ -1343,11 +1343,11 @@ void ProcessQuitMenu()
     if (MenuSelect)    AddVoice(fxMenuGo.length, fxMenuGo.lpData);
   }
 
-  if (KeyboardState [VK_ESCAPE] & 128) MenuState = 0;  
-  
+  if (KeyboardState [VK_ESCAPE] & 128) MenuState = 0;
+
 //  //SetCursor(hcArrow);
   CopyMenuToVideo(MenuSelect);
-  ShowMenuVideo();    
+  ShowMenuVideo();
 
   if (MenuState!=8) LoadMenuTGA();
 }
@@ -1355,15 +1355,15 @@ void ProcessQuitMenu()
 
 
 void ProcessMenu()
-{      
-  
+{
+
   if (_GameState != GameState) {
 	 PrintLog("  Entered menu\n");
 	 LastMenuSelect=255;
      if (MenuState>0 && MenuState<112) MenuState = 0;
-     LoadMenuTGA();     
-     ShutDown3DHardware();              
-	 SetMenuVideoMode();  
+     LoadMenuTGA();
+     ShutDown3DHardware();
+	 SetMenuVideoMode();
 	 SetCursor(hcArrow);
 	 AudioStop();
 	 AudioSetCameraPos(1024, 0, 0, 0);
@@ -1373,7 +1373,7 @@ void ProcessMenu()
   }
   _GameState = GameState;
 
-  if (RestartMode) {	 
+  if (RestartMode) {
 	  GameState = 1;
 	  return;
 	}
@@ -1381,17 +1381,17 @@ void ProcessMenu()
   GetCursorPos(&p); p.x/=2; p.y/=2;
   int m = MenuSelect;
   MenuSelect = MenuMap[p.y][p.x];
-  GetKeyboardState(KeyboardState);   
+  GetKeyboardState(KeyboardState);
 
   if (MenuState>=0)
   SetAmbient3d(fxMenuAmb.length,
-	           fxMenuAmb.lpData, 
+	           fxMenuAmb.lpData,
 			   (float)1024+(p.x-200)*2, 0, 200);
 
   if (m!=MenuSelect && MenuSelect)
        AddVoice3d(fxMenuMov.length, fxMenuMov.lpData,
 	              (float)1024+(p.x-200)*2, 0, 200);
- 
+
   switch (MenuState) {
   case -3: ProcessRemove(); break;
   case -2: ProcessLicense(); break;
@@ -1400,7 +1400,7 @@ void ProcessMenu()
    case 1: ProcessLocationMenu(); break;
    case 2: ProcessWeaponMenu(); break;
    case 3: ProcessOptionsMenu(); break;
-   
+
    case 111:
    case 112:
    case 113:
@@ -1442,15 +1442,15 @@ void InitMenu()
 	AddMenuItem(Options[1], "Step Left");
 	AddMenuItem(Options[1], "Step Right");
 	AddMenuItem(Options[1], "Strafe");
-	AddMenuItem(Options[1], "Jump");	
+	AddMenuItem(Options[1], "Jump");
     AddMenuItem(Options[1], "Run");
 	AddMenuItem(Options[1], "Crouch");
 	AddMenuItem(Options[1], "Call");
 	AddMenuItem(Options[1], "Binoculars");
-	
+
 	AddMenuItem(Options[1], "Reverse mouse");
 	//AddMenuItem(Options[1], "Mouse sensitivity");
-	
+
 	wsprintf(CKtxt[0],"Color");
 	wsprintf(CKtxt[1],"Alpha Channel");
 
@@ -1475,7 +1475,7 @@ void InitMenu()
 
     wsprintf(Systxt[0],"Metric");
 	wsprintf(Systxt[1],"US");
-	
+
 
 	OptText = 2;
 	FOGENABLE = 1;
@@ -1483,7 +1483,7 @@ void InitMenu()
 	OptDens = 1;
 	OptSens = 1;
 	OptAgres= 1;
-	
+
 	KeyMap.fkForward  = 'A';
 	KeyMap.fkBackward = 'Z';
 	KeyMap.fkFire     = VK_LBUTTON;

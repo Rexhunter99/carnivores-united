@@ -1704,7 +1704,7 @@ void Render_LifeInfo(int li)
 
 
 
-void RotateVVector(Vector3d& v)
+void RotateVVector(glm::vec3& v)
 {
    float x = v.x * ca - v.z * sa;
    float y = v.y;
@@ -1721,8 +1721,8 @@ void RotateVVector(Vector3d& v)
 
 void RenderSkyPlane()
 {
-   Vector3d v,vbase;
-   Vector3d tx,ty,nv;
+   glm::vec3 v,vbase;
+   glm::vec3 tx,ty,nv;
    float p,q, qx, qy, qz, px, py, pz, rx, ry, rz, ddx, ddy;
    int lastdt = 0;
 

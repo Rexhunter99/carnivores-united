@@ -7,7 +7,7 @@ void SetupRes()
 	if (OptRes==2) { WinW = 512; WinH=384; }
 	if (OptRes==3) { WinW = 640; WinH=480; }
 	if (OptRes==4) { WinW = 800; WinH=600; }
-	if (OptRes==5) { WinW =1024; WinH=768; }		
+	if (OptRes==5) { WinW =1024; WinH=768; }
 
 }
 
@@ -21,7 +21,7 @@ float GetLandOH(int x, int y)
 float GetLandOUH(int x, int y)
 {
   if (FMap[y][x] & fmReverse)
-   return (float)((int)(HMap[y][x+1]+HMap[y+1][x])/2.f)*ctHScale;             
+   return (float)((int)(HMap[y][x+1]+HMap[y+1][x])/2.f)*ctHScale;
                 else
    return (float)((int)(HMap[y][x]+HMap[y+1][x+1])/2.f)*ctHScale;
 }
@@ -29,12 +29,12 @@ float GetLandOUH(int x, int y)
 
 
 float GetLandUpH(float x, float y)
-{ 
+{
    int CX = (int)x / 256;
    int CY = (int)y / 256;
-   
+
    int dx = (int)x % 256;
-   int dy = (int)y % 256; 
+   int dy = (int)y % 256;
 
    int h1 = HMap[CY][CX];
    int h2 = HMap[CY][CX+1];
@@ -54,17 +54,17 @@ float GetLandUpH(float x, float y)
 	   (h1   * (256-dx) + h2 * dx) * (256-dy) +
 	   (h4   * (256-dx) + h3 * dx) * dy;
 
-   return  h / 256.f / 256.f * ctHScale;	      
+   return  h / 256.f / 256.f * ctHScale;
 }
 
 
 float GetLandH(float x, float y)
-{ 
+{
    int CX = (int)x / 256;
    int CY = (int)y / 256;
-   
+
    int dx = (int)x % 256;
-   int dy = (int)y % 256; 
+   int dy = (int)y % 256;
 
    int h1 = HMap2[CY][CX];
    int h2 = HMap2[CY][CX+1];
@@ -84,7 +84,7 @@ float GetLandH(float x, float y)
 	   (h1   * (256-dx) + h2 * dx) * (256-dy) +
 	   (h4   * (256-dx) + h3 * dx) * dy;
 
-   return  (h / 256.f / 256.f - 48) * ctHScale;	      
+   return  (h / 256.f / 256.f - 48) * ctHScale;
 }
 
 
@@ -93,11 +93,11 @@ float GetLandH(float x, float y)
 float GetLandQH(float CameraX, float CameraZ)
 {
   float h,hh;
-  
+
    h = GetLandH(CameraX, CameraZ);
    hh = GetLandH(CameraX-90.f, CameraZ-90.f); if (hh>h) h=hh;
    hh = GetLandH(CameraX+90.f, CameraZ-90.f); if (hh>h) h=hh;
-   hh = GetLandH(CameraX-90.f, CameraZ+90.f); if (hh>h) h=hh; 
+   hh = GetLandH(CameraX-90.f, CameraZ+90.f); if (hh>h) h=hh;
    hh = GetLandH(CameraX+90.f, CameraZ+90.f); if (hh>h) h=hh;
 
    hh = GetLandH(CameraX+128.f, CameraZ); if (hh>h) h=hh;
@@ -109,11 +109,11 @@ float GetLandQH(float CameraX, float CameraZ)
    int ccz = (int)CameraZ / 256;
 
    for (int z=-2; z<=2; z++)
-    for (int x=-2; x<=2; x++) 
+    for (int x=-2; x<=2; x++)
       if (OMap[ccz+z][ccx+x]!=255) {
         int ob = OMap[ccz+z][ccx+x];
         float CR = (float)MObjects[ob].info.Radius - 1.f;
-                
+
         float oz = (ccz+z) * 256.f + 128.f;
         float ox = (ccx+x) * 256.f + 128.f;
 
@@ -121,7 +121,7 @@ float GetLandQH(float CameraX, float CameraZ)
         if (MObjects[ob].info.YHi + GetLandOH(ccx+x, ccz+z) > PlayerY+128) continue;
         if (MObjects[ob].info.YLo + GetLandOH(ccx+x, ccz+z) > PlayerY+256) continue;
         float r = (float) sqrt( (ox-CameraX)*(ox-CameraX) + (oz-CameraZ)*(oz-CameraZ) );
-        if (r<CR) 
+        if (r<CR)
             h = MObjects[ob].info.YHi + GetLandOH(ccx+x, ccz+z);
    }
   return h;
@@ -130,7 +130,7 @@ float GetLandQH(float CameraX, float CameraZ)
 
 float GetLandHObj(float CameraX, float CameraZ)
 {
-   float h;   
+   float h;
 
    h = 0;
 
@@ -138,18 +138,18 @@ float GetLandHObj(float CameraX, float CameraZ)
    int ccz = (int)CameraZ / 256;
 
    for (int z=-2; z<=2; z++)
-    for (int x=-2; x<=2; x++) 
+    for (int x=-2; x<=2; x++)
       if (OMap[ccz+z][ccx+x]!=255) {
         int ob = OMap[ccz+z][ccx+x];
         float CR = (float)MObjects[ob].info.Radius - 1.f;
-        
+
         float oz = (ccz+z) * 256.f + 128.f;
         float ox = (ccx+x) * 256.f + 128.f;
 
         if (MObjects[ob].info.YHi + GetLandOH(ccx+x, ccz+z) < h) continue;
         if (MObjects[ob].info.YLo + GetLandOH(ccx+x, ccz+z) > PlayerY+256) continue;
         float r = (float) sqrt( (ox-CameraX)*(ox-CameraX) + (oz-CameraZ)*(oz-CameraZ) );
-        if (r<CR) 
+        if (r<CR)
             h = MObjects[ob].info.YHi + GetLandOH(ccx+x, ccz+z);
    }
 
@@ -160,18 +160,18 @@ float GetLandHObj(float CameraX, float CameraZ)
 float GetLandQHNoObj(float CameraX, float CameraZ)
 {
   float h,hh;
-  
+
    h = GetLandH(CameraX, CameraZ);
    hh = GetLandH(CameraX-90.f, CameraZ-90.f); if (hh>h) h=hh;
    hh = GetLandH(CameraX+90.f, CameraZ-90.f); if (hh>h) h=hh;
-   hh = GetLandH(CameraX-90.f, CameraZ+90.f); if (hh>h) h=hh; 
+   hh = GetLandH(CameraX-90.f, CameraZ+90.f); if (hh>h) h=hh;
    hh = GetLandH(CameraX+90.f, CameraZ+90.f); if (hh>h) h=hh;
 
    hh = GetLandH(CameraX+128.f, CameraZ); if (hh>h) h=hh;
    hh = GetLandH(CameraX-128.f, CameraZ); if (hh>h) h=hh;
    hh = GetLandH(CameraX, CameraZ+128.f); if (hh>h) h=hh;
    hh = GetLandH(CameraX, CameraZ-128.f); if (hh>h) h=hh;
-   
+
    return h;
 }
 
@@ -187,9 +187,9 @@ void ProcessCommandLine()
      if (strstr(s,"/vmode2")) SetVideoMode(400, 300);
      if (strstr(s,"/vmode3")) SetVideoMode(512, 384);
      if (strstr(s,"/vmode4")) SetVideoMode(640, 480);
-     if (strstr(s,"/vmode5")) SetVideoMode(800, 600);     
+     if (strstr(s,"/vmode5")) SetVideoMode(800, 600);
      if (strstr(s,"prj=")) { strcpy(ProjectName, (s+4)); GameState = 1; }
-  } 
+  }
 }
 
 
@@ -209,7 +209,7 @@ void AddShipTask(int cindex)
 {
   TCharacter *cptr = &Characters[cindex];
 
-  BOOL TROPHYON  = (GetLandUpH(cptr->pos.x, cptr->pos.z) - GetLandH(cptr->pos.x, cptr->pos.z) < 100) && 
+  BOOL TROPHYON  = (GetLandUpH(cptr->pos.x, cptr->pos.z) - GetLandH(cptr->pos.x, cptr->pos.z) < 100) &&
 	               (!Tranq);
 
   if (TROPHYON) {
@@ -241,8 +241,8 @@ void AddShipTask(int cindex)
 
 
   if (TROPHYON) {
-   TrophyTime = 20 * 1000;  
-   TrophyBody = t;  
+   TrophyTime = 20 * 1000;
+   TrophyBody = t;
    TrophyRoom.Body[t].ctype  = Characters[cindex].CType;
    TrophyRoom.Body[t].scale  = Characters[cindex].scale;
    TrophyRoom.Body[t].weapon = TargetWeapon;
@@ -254,7 +254,7 @@ void AddShipTask(int cindex)
    PrintLog("Trophy added: ");
    PrintLog(DinoInfo[Characters[cindex].CType].Name);
    PrintLog("\n");
-  }  
+  }
 }
 
 void InitShip(int cindex)
@@ -263,10 +263,10 @@ void InitShip(int cindex)
 
 	Ship.DeltaY = 2048.f + DinoInfo[cptr->CType].ShDelta * cptr->scale;
 
-	Ship.pos.x = PlayerX - 50*256; 
-	if (Ship.pos.x < 256) Ship.pos.x = PlayerX + 50*256; 
+	Ship.pos.x = PlayerX - 50*256;
+	if (Ship.pos.x < 256) Ship.pos.x = PlayerX + 50*256;
 	Ship.pos.z = PlayerZ - 50*256;
-	if (Ship.pos.z < 256) Ship.pos.z = PlayerZ + 50*256; 
+	if (Ship.pos.z < 256) Ship.pos.z = PlayerZ + 50*256;
 	Ship.pos.y = GetLandUpH(Ship.pos.x, Ship.pos.z)  + Ship.DeltaY;
 
 	Ship.tgpos.x = cptr->pos.x;
@@ -407,10 +407,10 @@ void InitEngine()
     CORRECTION   = TRUE;
 	FOGON        = TRUE;
 	FOGENABLE    = TRUE;
-    Clouds       = TRUE;   
+    Clouds       = TRUE;
     SKY          = TRUE;
-    GOURAUD      = TRUE;   
-    MODELS       = TRUE;   
+    GOURAUD      = TRUE;
+    MODELS       = TRUE;
     //TIMER        = TRUE;
     BITMAPP      = FALSE;
     MIPMAP       = TRUE;
@@ -431,11 +431,11 @@ void InitEngine()
         23, 10, 0, 0,
         600, 0,0,0,
 #ifdef __rus
-		RUSSIAN_CHARSET,		
+		RUSSIAN_CHARSET,
 #else
         ANSI_CHARSET,
-#endif				
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, NULL);	
+#endif
+        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, NULL);
 
 
 
@@ -444,29 +444,29 @@ void InitEngine()
         14, 5, 0, 0,
         100, 0,0,0,
 #ifdef __rus
-		RUSSIAN_CHARSET,		
+		RUSSIAN_CHARSET,
 #else
         ANSI_CHARSET,
-#endif		        
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, NULL);	
+#endif
+        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, NULL);
 
 
     fnt_Midd  = CreateFont(
         16, 7, 0, 0,
         550, 0,0,0,
 #ifdef __rus
-		RUSSIAN_CHARSET,		
+		RUSSIAN_CHARSET,
 #else
         ANSI_CHARSET,
-#endif		        
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, NULL);	
+#endif
+        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, NULL);
 
 
 
 
     Heap = HeapCreate( 0, 16000000, 40000000 );
     if( Heap == NULL ) {
-      MessageBox(hwndMain,"Error creating heap.","Error",IDOK);     
+      MessageBox(hwndMain,"Error creating heap.","Error",IDOK);
       return; }
 
     Textures[255] = (TEXTURE*) _HeapAlloc(Heap, 0, sizeof(TEXTURE));
@@ -481,25 +481,25 @@ void InitEngine()
 	InitGameInfo();
 
 	InitMenu();
-    
+
     InitAudioSystem(hwndMain);
-	        
+
     InitDirectDraw();
 
     CreateVideoDIB();
-    CreateFadeTab();	
+    CreateFadeTab();
     CreateDivTable();
     InitClips();
 	/*
 #ifdef _3dfx
-    SetVideoMode(640, 480);    
+    SetVideoMode(640, 480);
 #else
-    SetVideoMode(512, 384);    
+    SetVideoMode(512, 384);
 #endif
 */
 	FULLSCREEN = TRUE;
     MenuState = -1;
-    
+
 //    MenuState = 0;
     TrophyRoom.RegNumber=0;
 	LoadTrophy();
@@ -508,8 +508,8 @@ void InitEngine()
 	PlayerZ = (ctMapSize / 2) * 256;
     strcpy(ProjectName,"hunt");
 
-    ProcessCommandLine();    
-    
+    ProcessCommandLine();
+
     ctViewR = 36;
     Soft_Persp_K = 1.5f;
     HeadY = 220;
@@ -518,12 +518,12 @@ void InitEngine()
 	FogsList[0].YBegin = 0;
 //  FogsList[0].YMax = 0;
 	FogsList[0].Transp = 000;
-	FogsList[0].FLimit = 000; 	
+	FogsList[0].FLimit = 000;
 
-	FogsList[127].fogRGB = 0x604500;	
+	FogsList[127].fogRGB = 0x604500;
     FogsList[127].Mortal = FALSE;
-	FogsList[127].Transp = 450; 
-	FogsList[127].FLimit = 160; 
+	FogsList[127].Transp = 450;
+	FogsList[127].FLimit = 160;
 
 	FillMemory( FogsMap, sizeof(FogsMap), 0);
 	PrintLog("Init Engine: Ok.\n");
@@ -556,7 +556,7 @@ void ProcessSyncro()
    Takt++;
    if (!PAUSE)
     if (MyHealth) MyHealth+=TimeDt*4;
-   if (MyHealth>MAX_HEALTH) MyHealth = MAX_HEALTH;   
+   if (MyHealth>MAX_HEALTH) MyHealth = MAX_HEALTH;
 }
 
 
@@ -574,9 +574,9 @@ void MakeCall()
 {
    if (ObservMode || TrophyMode) return;
    if (CallLockTime) return;
-   
+
    CallLockTime=1024*3;
-   
+
    NextCall+=(RealTime % 2)+1;
    NextCall%=3;
 
@@ -591,7 +591,7 @@ void MakeCall()
 	 if (DinoInfo[TargetDino+4].DangerCall)
 		 if (cptr->CType<4) {
 			 cptr->State=2;
-			 cptr->AfraidTime = (10 + rRand(5)) * 1024; 
+			 cptr->AfraidTime = (10 + rRand(5)) * 1024;
 		 }
 
 	 if (cptr->CType!=4 + TargetDino) continue;
@@ -611,9 +611,9 @@ void MakeCall()
 	   answpos = SubVectors(Characters[ai].pos, PlayerPos);
        answpos.x/=-3.f; answpos.y/=-3.f; answpos.z/=-3.f;
        answpos = SubVectors(PlayerPos, answpos);
-	   answtime = 2000 + rRand(2000);	   
+	   answtime = 2000 + rRand(2000);
    }
-	              
+
 }
 
 
@@ -625,7 +625,7 @@ void MakeShot(float ax, float ay, float az,
   if (TargetWeapon!=1)
    sres = TraceShot(ax, ay, az, bx, by, bz);
   else {
-	 Vector3d dl;
+	 glm::vec3 dl;
 	 float dy = 40;
 	 dl.x = (bx-ax) / 3;
 	 dl.y = (by-ay) / 3;
@@ -659,36 +659,36 @@ ENDTRACE:
 
   int mort = (sres & 0xFF00) && (Characters[ShotDino].Health);
   sres &= 0xFF;
-  
+
   if (sres!=3) return;
   if (!Characters[ShotDino].Health) return;
 
-  if (mort) Characters[ShotDino].Health = 0; 
+  if (mort) Characters[ShotDino].Health = 0;
        else Characters[ShotDino].Health--;
 
-  
-  if (sres == 3) 
-	if (!Characters[ShotDino].Health) {	 
+
+  if (sres == 3)
+	if (!Characters[ShotDino].Health) {
 	 DemoPoint.pos = Characters[ShotDino].pos;
 	 DemoPoint.pos.y;
 	 if (Characters[ShotDino].CType>3) {
 	   TrophyRoom.Last.ssucces++;
-	   AddShipTask(ShotDino);	   
+	   AddShipTask(ShotDino);
 	 }
 
-	 if (Characters[ShotDino].CType<=3) 
+	 if (Characters[ShotDino].CType<=3)
 	     Characters_AddSecondaryOne(Characters[ShotDino].CType);
-     
+
 	 DemoPoint.CIndex = ShotDino;
 	}
 	else {
 	 Characters[ShotDino].AfraidTime = 60*1000;
 	 if (Characters[ShotDino].CType!=10 || Characters[ShotDino].State==0)
-        Characters[ShotDino].State = 2;	 
-	}   
+        Characters[ShotDino].State = 2;
+	}
 
-   if (Characters[ShotDino].CType==10) 
-	if (Characters[ShotDino].State) 
+   if (Characters[ShotDino].CType==10)
+	if (Characters[ShotDino].State)
 	   Characters[ShotDino].State = 5;
 	else
 		Characters[ShotDino].State = 1;
@@ -700,10 +700,10 @@ void RemoveCharacter(int index)
   if (index==-1) return;
   memcpy( &Characters[index], &Characters[index+1], (255 - index) * sizeof(TCharacter) );
   ChCount--;
-   
+
   if (DemoPoint.CIndex > index) DemoPoint.CIndex--;
 
-  for (int c=0; c<ShipTask.tcount; c++) 
+  for (int c=0; c<ShipTask.tcount; c++)
 	 if (ShipTask.clist[c]>index) ShipTask.clist[c]--;
 }
 
@@ -712,7 +712,7 @@ void AnimateShip()
 {
   if (Ship.State==-1) {
 	  SetAmbient3d(0,0, 0,0,0);
-	  if (!ShipTask.tcount) return; 
+	  if (!ShipTask.tcount) return;
 	  InitShip(ShipTask.clist[0]);
 	  memcpy(&ShipTask.clist[0], &ShipTask.clist[1], 250*4);
 	  ShipTask.tcount--;
@@ -720,8 +720,8 @@ void AnimateShip()
   }
 
 
-  SetAmbient3d(ShipModel.SoundFX[0].length, 
-	           ShipModel.SoundFX[0].lpData, 
+  SetAmbient3d(ShipModel.SoundFX[0].length,
+	           ShipModel.SoundFX[0].lpData,
 			   Ship.pos.x, Ship.pos.y, Ship.pos.z);
 
   int _TimeDt = TimeDt;
@@ -737,8 +737,8 @@ void AnimateShip()
 
   Ship.tgalpha    = FindVectorAlpha(Ship.tgpos.x - Ship.pos.x, Ship.tgpos.z - Ship.pos.z);
   float currspeed;
-  float dalpha = AngleDifference(Ship.tgalpha, Ship.alpha);        
-  
+  float dalpha = AngleDifference(Ship.tgalpha, Ship.alpha);
+
 
   float L = VectorLength( SubVectors(Ship.tgpos, Ship.pos) );
   Ship.pos.y+=0.3f*(float)cos(RealTime / 256.f);
@@ -763,12 +763,12 @@ void AnimateShip()
 	  AddVoice(ShipModel.SoundFX[4].length,
 		       ShipModel.SoundFX[4].lpData);
 	  AddVoice3d(ShipModel.SoundFX[1].length, ShipModel.SoundFX[1].lpData,
-		        Ship.pos.x, Ship.pos.y, Ship.pos.z);   
+		        Ship.pos.x, Ship.pos.y, Ship.pos.z);
 	}
 	return;
   }
 
-  
+
 //========= get body on board ==========//
   if (Ship.State) {
 	  if (Ship.cindex!=-1) {
@@ -776,24 +776,24 @@ void AnimateShip()
 	    DeltaFunc(Characters[Ship.cindex].beta,  0, TimeDt / 4048.f);
 	    DeltaFunc(Characters[Ship.cindex].gamma, 0, TimeDt / 4048.f);
 	  }
-	
+
 	if (Ship.State==2) {
 	  Ship.FTime-=_TimeDt;
 	  if (Ship.FTime<0) Ship.FTime=0;
 
 	  if (Ship.FTime==0)
 		  if (fabs(Characters[Ship.cindex].pos.y - (Ship.pos.y-650 - (Ship.DeltaY-2048))) < 1.f) {
-		      Ship.State = 1;		  	  
+		      Ship.State = 1;
 			  AddVoice(ShipModel.SoundFX[5].length,
 		               ShipModel.SoundFX[5].lpData);
 		  	  AddVoice3d(ShipModel.SoundFX[2].length, ShipModel.SoundFX[2].lpData,
-		        Ship.pos.x, Ship.pos.y, Ship.pos.z);   
+		        Ship.pos.x, Ship.pos.y, Ship.pos.z);
 		  }
       return;
 	}
   }
-  
-//====== speed ===============//  
+
+//====== speed ===============//
   float vspeed = 1.f + L / 128.f;
   if (vspeed > 24) vspeed = 24;
   if (Ship.State) vspeed = 24;
@@ -802,18 +802,18 @@ void AnimateShip()
   if (vspeed>Ship.speed) DeltaFunc(Ship.speed, vspeed, TimeDt / 200.f);
                     else Ship.speed = vspeed;
 
-  if (Ship.speed>0 && _s==0) 
+  if (Ship.speed>0 && _s==0)
 	  AddVoice3d(ShipModel.SoundFX[2].length, ShipModel.SoundFX[2].lpData,
-		        Ship.pos.x, Ship.pos.y, Ship.pos.z);   
+		        Ship.pos.x, Ship.pos.y, Ship.pos.z);
 
 //====== fly ===========//
-  float l = TimeDt * Ship.speed / 16.f;   
-  
+  float l = TimeDt * Ship.speed / 16.f;
+
   if (fabs(dalpha) < 0.4)
   if (l<L) {
    Ship.pos.x += (float)cos(Ship.alpha)*l;
    Ship.pos.z += (float)sin(Ship.alpha)*l;
-  } else {   
+  } else {
    if (Ship.State) {
 	 Ship.State = -1;
 	 RemoveCharacter(Ship.cindex);
@@ -823,9 +823,9 @@ void AnimateShip()
 	 Ship.State = 3;
 	 Ship.FTime = 1;
 	 Ship.tgpos = Ship.retpos;
-	 Characters[Ship.cindex].StateF = 0xFF;	 
+	 Characters[Ship.cindex].StateF = 0xFF;
 	 AddVoice3d(ShipModel.SoundFX[1].length, ShipModel.SoundFX[1].lpData,
-		        Ship.pos.x, Ship.pos.y, Ship.pos.z);   
+		        Ship.pos.x, Ship.pos.y, Ship.pos.z);
    }
   }
 
@@ -833,22 +833,22 @@ void AnimateShip()
   float h = GetLandUpH(Ship.pos.x, Ship.pos.z);
   DeltaFunc(Ship.pos.y, Ship.tgpos.y, TimeDt / 8.f);
   if (Ship.pos.y < h + 1024) Ship.pos.y = h + 1024;
-  
-  
+
+
 
 //======= rotation ============//
   if (Ship.tgalpha > Ship.alpha) currspeed = 0.1f + (float)fabs(dalpha)/2.f;
-                            else currspeed =-0.1f - (float)fabs(dalpha)/2.f;     
-							 
-  if (fabs(dalpha) > pi) currspeed*=-1;   
-         
+                            else currspeed =-0.1f - (float)fabs(dalpha)/2.f;
+
+  if (fabs(dalpha) > pi) currspeed*=-1;
+
   DeltaFunc(Ship.rspeed, currspeed, (float)TimeDt / 420.f);
-  
+
   float rspd=Ship.rspeed * TimeDt / 1024.f;
   if (fabs(dalpha) < fabs(rspd)) { Ship.alpha = Ship.tgalpha; Ship.rspeed/=2; }
   else {
 	Ship.alpha+=rspd;
-	if (Ship.State) 
+	if (Ship.State)
 	 if (Ship.cindex!=-1)
 		Characters[Ship.cindex].alpha+=rspd;
   }
@@ -876,7 +876,7 @@ void ProcessTrophy()
 	TrophyBody = -1;
 
 	for (int c=0; c<ChCount; c++) {
-		Vector3d p = Characters[c].pos;
+		glm::vec3 p = Characters[c].pos;
 		p.x+=Characters[c].lookx * 256*2.5f;
 		p.z+=Characters[c].lookz * 256*2.5f;
 
@@ -911,7 +911,7 @@ void AnimateProcesses()
 		  answtime = 0;
 		  int r = rRand(128) % 3;
 		  AddVoice3d(fxCall[r].length,  fxCall[r].lpData,
-		          answpos.x, answpos.y, answpos.z);				  
+		          answpos.x, answpos.y, answpos.z);
 	  }
   }
 
@@ -926,10 +926,10 @@ void AnimateProcesses()
   AnimateShip();
   if (TrophyMode)
       ProcessTrophy();
-	  
+
   for (int e=0; e<ExpCount; e++) {
      Explosions[e].FTime+=TimeDt;
-     if (Explosions[e].FTime >= ExplodInfo.Animation[0].AniTime) {         
+     if (Explosions[e].FTime >= ExplodInfo.Animation[0].AniTime) {
        memcpy(&Explosions[e], &Explosions[e+1], sizeof(TExplosion) * (ExpCount+1-e) );
        e--;
        ExpCount--;
@@ -940,7 +940,7 @@ void AnimateProcesses()
 
   if (ExitTime) {
 	ExitTime-=TimeDt;
-	if (ExitTime<=0) {		
+	if (ExitTime<=0) {
         TrophyRoom.Total.time   +=TrophyRoom.Last.time;
 	    TrophyRoom.Total.smade  +=TrophyRoom.Last.smade;
 		TrophyRoom.Total.ssucces+=TrophyRoom.Last.ssucces;
@@ -950,9 +950,9 @@ void AnimateProcesses()
 			  TrophyRoom.Score--;
 			  if (TrophyRoom.Score<0) TrophyRoom.Score = 0;
 		   }
-				  
+
 	    if (MyHealth) SaveTrophy();
-				 else LoadTrophy();				
+				 else LoadTrophy();
 	    GameState = 0;
 	}
   }
@@ -961,7 +961,7 @@ void AnimateProcesses()
 
 
 void RemoveCurrentTrophy()
-{	
+{
     int p = 0;
 	if (!TrophyMode) return;
 	if (!TrophyRoom.Body[TrophyBody].ctype) return;
@@ -977,8 +977,8 @@ void RemoveCurrentTrophy()
 	TrophyRoom.Body[TrophyBody].ctype = 0;
 
 	if (TrophyMode) {
-	  memcpy(&Characters[p],  
-	         &Characters[p+1], 
+	  memcpy(&Characters[p],
+	         &Characters[p+1],
 		     (250-p) * sizeof(TCharacter) );
 	  ChCount--;
 	}
@@ -1070,7 +1070,7 @@ void SaveTrophy()
 	WriteFile(hfile, &SHADOWS3D, 4, &l, NULL);
 
 	WriteFile(hfile, &KeyMap, sizeof(KeyMap), &l, NULL);
-	WriteFile(hfile, &REVERSEMS, 4, &l, NULL);	
+	WriteFile(hfile, &REVERSEMS, 4, &l, NULL);
 
 	WriteFile(hfile, &ScentMode, 4, &l, NULL);
 	WriteFile(hfile, &CamoMode, 4, &l, NULL);
@@ -1087,7 +1087,7 @@ void SaveTrophy()
 void LoadPlayersInfo()
 {
 	FillMemory(PlayerR, sizeof(PlayerR), 0);
-	for (int p=0; p<16; p++) {			
+	for (int p=0; p<16; p++) {
 	  char fname[128];
 	  DWORD l;
 
