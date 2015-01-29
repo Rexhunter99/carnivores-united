@@ -71,6 +71,9 @@
 		<Unit filename="RenderSoft.cpp">
 			<Option virtualFolder="Video/" />
 		</Unit>
+		<Unit filename="Renderer.h">
+			<Option virtualFolder="Video/Custom/" />
+		</Unit>
 		<Unit filename="Resources.cpp" />
 		<Unit filename="Video.h">
 			<Option virtualFolder="Video/" />

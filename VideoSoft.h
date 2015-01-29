@@ -5,7 +5,6 @@
 
 #inlcude "Video.h"
 
-
 class VideoSoft : public Video
 {
 public:
@@ -43,10 +42,6 @@ private:
 		uint16_t	sse42:1;
 		uint16_t	amd3dnow:1;
 	} optimisations;
-
-	rgb24_t		*frontBuffer;
-	rgb24_t		*backBuffer;
-	uint16_t	*depthBuffer;
 
 };
 

@@ -10,7 +10,7 @@
 //  Windows
 #define cpuid(info,x)    __cpuidex(info,x,0)
 
-#else
+#else // For non-windows/MinGW
 
 //  GCC Inline Assembly
 void cpuid(int CPUInfo[4],int InfoType)

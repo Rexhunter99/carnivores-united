@@ -1,9 +1,9 @@
 #pragma once
 
-#ifndef H_VIDEO_H
-#define H_VIDEO_H
+#ifndef __VIDEO_H__
+#define __VIDEO_H__
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <glm/fwd.hpp>
 
@@ -37,17 +37,14 @@ public:
 	// --
 	virtual void renderModel() = 0;
 
-	// -- This is just a bsee object that should never be directly created
+	// -- This is just a base object that should never be directly created
 	class Texture
 	{
 	public:
 
 		uint16_t	width,
 					height;
-		struct {
-			uint8_t		mipmaps:1;
-			uint8_t		glow:1;
-		} properties;
+		uint8_t		mipmaps:1;
 
 	private:
 		~Texture();
