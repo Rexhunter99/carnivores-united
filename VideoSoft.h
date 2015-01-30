@@ -1,9 +1,11 @@
 #pragma once
-
-#ifndef H_VIDEOSOFT_H
-#define H_VIDEOSOFT_H
+#ifndef __VIDEOSOFTWARE_H__
+#define __VIDEOSOFTWARE_H__
 
 #inlcude "Video.h"
+#include <map>
+#include <string>
+
 
 class VideoSoft : public Video
 {
@@ -12,27 +14,24 @@ public:
 	VideoSoft();
 	~VideoSoft();
 
-	bool init();
-	bool startUp();
-	bool shutDown();
+	bool	createTexture( std::string name, std::string filename );
+	void	setActiveTexture( std::string name, uint8_t layer = 0 );
 
-	/**
-	** All TextureSoft textures are 32-bit internally, regardless of the color depth of the canvas.
-	**/
+private:
+
+	std::map<std::string,Texture*>	texture_list;
+
 	class TextureSoft : public Video::Texture
 	{
 	public:
 
-		uint32_t*	textureData;
-		uint16_t	width, height;
+		uint32_t	*texture_data;
 
 	private:
 
 	};
 
-private:
-
-	struct {
+	struct optimizations_s {
 		uint16_t	mmx:1;
 		uint16_t	sse:1;
 		uint16_t	sse2:1;
@@ -41,7 +40,11 @@ private:
 		uint16_t	sse41:1;
 		uint16_t	sse42:1;
 		uint16_t	amd3dnow:1;
-	} optimisations;
+		uint16_t	reserved:8;
+	} optimizations;
+
+	void	*back_buffer,
+			*depth_buffer;
 
 };
 

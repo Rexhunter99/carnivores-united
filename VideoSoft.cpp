@@ -2,6 +2,9 @@
 #include "VideoSoft.h"
 
 
+using namespace std;
+
+
 /**
 ** CPUID for GCC
 **/
@@ -42,33 +45,26 @@ VideoSoft::VideoSoft()
 	if (nIds >= 0x00000001)
 	{
 		cpuid(info,0x00000001);
-		this->optimisations.mmx    = (info[3] & ((int)1 << 23)) != 0;
-		this->optimisations.sse    = (info[3] & ((int)1 << 25)) != 0;
-		this->optimisations.sse2   = (info[3] & ((int)1 << 26)) != 0;
-		this->optimisations.sse3   = (info[2] & ((int)1 <<  0)) != 0;
+		this->optimizations.mmx    = (info[3] & ((int)1 << 23)) != 0;
+		this->optimizations.sse    = (info[3] & ((int)1 << 25)) != 0;
+		this->optimizations.sse2   = (info[3] & ((int)1 << 26)) != 0;
+		this->optimizations.sse3   = (info[2] & ((int)1 <<  0)) != 0;
 
-		this->optimisations.ssse3  = (info[2] & ((int)1 <<  9)) != 0;
-		this->optimisations.sse41  = (info[2] & ((int)1 << 19)) != 0;
-		this->optimisations.sse42  = (info[2] & ((int)1 << 20)) != 0;
+		this->optimizations.ssse3  = (info[2] & ((int)1 <<  9)) != 0;
+		this->optimizations.sse41  = (info[2] & ((int)1 << 19)) != 0;
+		this->optimizations.sse42  = (info[2] & ((int)1 << 20)) != 0;
 	}
+
+	// -- Allocate the frame buffer
+	this->back_buffer = (rgb24_t*)malloc( canvasWidth * canvasHeight * sizeof(rgb24_t) );
+	this->depth_buffer = (uint16_t*)malloc( canvasWidth * canvasHeight * 2 );
 }
 
 VideoSoft::~VideoSoft()
 {
-}
+	if ( this->back_buffer != nullptr ) free( this->back_buffer );
+	if ( this->depth_buffer != nullptr ) free( this->depth_buffer );
 
-
-bool VideoSoft::startUp()
-{
-	this->backBuffer = (rgb_t*)malloc( canvasWidth * canvasHeight * 3 );
-	this->depthBuffer = (uint16_t*)malloc( canvasWidth * canvasHeight * 2 );
-}
-
-bool VideoSoft::shutDown()
-{
-	if ( this->backBuffer != nullptr ) free( this->backBuffer );
-	if ( this->depthBuffer != nullptr ) free( this->depthBuffer );
-
-	this->backBuffer = 0;
-	this->depthBuffer = 0;
+	this->back_buffer = 0;
+	this->depth_buffer = 0;
 }
