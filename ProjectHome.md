@@ -1,0 +1,1 @@
+Updating the Carnivores 1/AtmosFEAR 1.0 source-code to work with modern systems and implementing better mod support and features.
